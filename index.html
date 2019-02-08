@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeWithBryce</title>
+
+    <!-- css-->
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <!--jquery css-->
+    <link href="jquery-ui/jquery-ui.css" rel="stylesheet" type="text/css">
+
+    <!-- jquery javascript src -->
+    <script src="jquery-ui/jquery-ui.js"></script>
+
+    <!-- Ajax js src -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+   <!-- wraps the logo and the toggle buttons together at the header of page -->
+    <div id="header">
+       
+         <div id="logo">
+
+            CodeWithBryce
+
+        </div>
+        <!-- when toggle button is on active(blue) The iframe will split the page into specific section(panel), if the toggle button is off it will close that specific section(panel) on the page. -->
+        <div id="buttonContainer">
+
+            <div class="toggleButton active" id="html">HTML</div>
+           
+             <div class="toggleButton" id="css">CSS</div>
+            
+            <div class="toggleButton" id="javascript">Javascript</div>
+           
+             <div class="toggleButton active" id="output">Output</div>
+        </div>
+
+    </div>
+
+    <!--The panels are the specific text sections on the page.  The amount of text sections that are on the page is determined by how many toggle buttons are on -->
+    <div id="bodyContainer">
+
+        <textarea id="htmlPanel" class="panel"><p id = "paragraph">Hello World!</p></textarea>
+
+        <textarea id="cssPanel" class="panel hidden">p {color : green; } </textarea>
+
+        <textarea id="javascriptPanel" class="panel hidden">document.getElementById("paragraph").innerHTML = "Hello Bryce";</textarea>
+
+       <!-- this panel(section) on the page is where the output goes -->
+         <iframe id="outputPanel" class="panel"></iframe>
+
+    </div>
+
+
+
+
+
+
+
+    <script type=" text/javascript">
+        //The html of the contents of the Iframe updates to a full html file, with html and a header with a style of the cssPanel. It then closes the style, head and starts the body, which gets the html content from the html panel. 
+        function updateOutput(){
+            
+             $("iframe").contents().find("html").html("<html><head><style type ='text/css'>" + $("#cssPanel").val() + "</style></head><body>" +
+            $("#htmlPanel").val() + "</body></html>");
+            
+            //evalutes the javascript inside javascript panel then ouptuts it inside the IFrame(outputPanel)
+            document.getElementById("outputPanel").contentWindow.   eval($("#javascriptPanel").val());
+            
+            
+            
+            
+        }
+       //when toggle button is hovered over with pointer it turns grey, when its not hovered over it goes back to its orginal color
+        $(".toggleButton").hover(function() {
+
+            $(this).addClass("highlightedButton");
+
+        }, function() {
+           
+            $(this).removeClass("highlightedButton")
+
+
+        });
+        //when toggle button is clicked on active the highlight on the button is removed, it also shows the respective panel that is clicked upon.
+        $(".toggleButton").click(function() {
+            $(this).toggleClass("active");
+
+            $(this).removeClass("highlightedButton");
+
+            var panelId = $(this).attr("id") + "Panel";
+            
+            $("#" + panelId).toggleClass("hidden");
+            
+           //the amount of active panels that their can be is 4 but if their is panel that is "hidden" it will not show on page
+            var numberOfActivePanels = 4 - $('.hidden').length;
+         
+            //width of the window is determined by how many active panels are on 
+            $(".panel").width(($(window).width() / numberOfActivePanels) - 10);
+           
+        })
+        //selects all classes with panel and adjust the height to the size of the window
+        $(".panel").height($(window).height() - $("#header").height() - 15);
+        //selects all classes with panel and adjust the width to the size of the window
+        $(".panel").width(($(window).width() / 2) - 10);
+
+        updateOutput();;
+        
+        //Anytime there is a change in the text areas the output in the Iframe(outputPanel) is updated, with the updateOutput function
+        $("textarea").on('change keyup paste', function() {
+            
+            updateOutput();
+        });
+
+    </script>
+</body>
+
+</html>
